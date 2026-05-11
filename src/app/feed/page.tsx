@@ -5,12 +5,13 @@ import TokenCard from "@/components/TokenCard";
 import TokenDetailModal from "@/components/TokenDetailModal";
 import { TokenCardSkeleton } from "@/components/Skeleton";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import useSWR from 'swr';
 import useSWRInfinite from 'swr/infinite';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { apiRequest } from "@/lib/api";
 import { toast } from "react-hot-toast";
+import type { Token } from "@/types/api";
 
 const fetcher = (url: string) => apiRequest(url);
 
@@ -18,18 +19,47 @@ export default function FeedPage() {
   const { connected } = useWallet();
   const [selectedToken, setSelectedToken] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
+
+  // Debounce search query (500ms delay)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(searchQuery);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   // Fetch user profile to get their votes
   const { data: userData, mutate: mutateUser } = useSWR(connected ? '/users/me' : null, fetcher);
+
+  // Fetch search results if there's a query, otherwise fetch feed
+  const { data: searchData, error: searchError, mutate: mutateSearch } = useSWR(
+    debouncedQuery && connected ? `/tokens/search?q=${encodeURIComponent(debouncedQuery)}&limit=20` : null,
+    fetcher
+  );
 
   const { data: feedData, error, size, setSize, mutate: mutateFeed } = useSWRInfinite(
     (index) => `/tokens/feed?limit=20&offset=${index * 20}`,
     fetcher
   );
 
-  const tokens = feedData ? feedData.flatMap(page => page.tokens) : [];
-  const isLoading = !feedData && !error;
-  const hasMore = feedData ? (feedData[feedData.length - 1].hasMore || feedData[feedData.length - 1].tokens.length > 0) : true;
+  // Use search results if searching, otherwise use feed
+  const tokens = debouncedQuery && searchData
+    ? searchData.tokens
+    : feedData
+    ? feedData.flatMap(page => page.tokens)
+    : [];
+
+  const isLoading = debouncedQuery
+    ? !searchData && !searchError
+    : !feedData && !error;
+
+  const hasMore = debouncedQuery
+    ? false // No pagination for search results (yet)
+    : feedData
+    ? (feedData[feedData.length - 1].hasMore || feedData[feedData.length - 1].tokens.length > 0)
+    : true;
 
   // Create a map of token IDs the user has voted on for quick lookup
   const userVotesMap = useMemo(() => {
@@ -59,8 +89,12 @@ export default function FeedPage() {
 
     try {
       await votePromise;
-      // Refresh both feed (to update global vote counts) and user (to update user's vote status)
-      mutateFeed();
+      // Refresh feed/search (to update global vote counts) and user (to update user's vote status)
+      if (debouncedQuery) {
+        mutateSearch();
+      } else {
+        mutateFeed();
+      }
       mutateUser();
     } catch (err) {
       // Handled by toast.promise
@@ -82,9 +116,37 @@ export default function FeedPage() {
             <h1 className="text-4xl font-black tracking-tight mb-2 text-black dark:text-white uppercase">Live Hunt Feed</h1>
             <p className="text-zinc-500 font-medium">Real-time safety scans for new Solana tokens.</p>
           </div>
-          <div className="flex bg-white dark:bg-zinc-900 p-1.5 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm">
-             <button className="px-6 py-2 bg-zinc-100 dark:bg-zinc-800 rounded-xl text-xs font-black uppercase tracking-widest">Newest</button>
-             <button className="px-6 py-2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 text-xs font-black uppercase tracking-widest transition-colors">Trending</button>
+          <div className="relative w-full md:w-96">
+            <input
+              type="text"
+              placeholder="Search by name, symbol, or mint address..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full px-5 py-3 pl-12 bg-white dark:bg-zinc-900 text-black dark:text-white placeholder-zinc-400 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white focus:border-transparent transition-all"
+            />
+            <svg
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
           </div>
         </div>
 
@@ -115,12 +177,16 @@ export default function FeedPage() {
             }
             endMessage={
               <div className="py-12 text-center text-zinc-500 font-bold uppercase tracking-widest text-xs col-span-full">
-                You've caught all the tokens for now! 🎯
+                {debouncedQuery && tokens.length === 0
+                  ? `No tokens found for "${debouncedQuery}" 🔍`
+                  : debouncedQuery
+                  ? `Found ${tokens.length} result${tokens.length === 1 ? '' : 's'} for "${debouncedQuery}" ✓`
+                  : "You've caught all the tokens for now! 🎯"}
               </div>
             }
           >
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {tokens.map((token) => (
+              {tokens.map((token: Token) => (
                 <TokenCard
                   key={token.id}
                   token={token}
