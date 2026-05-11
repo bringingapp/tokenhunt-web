@@ -1,0 +1,28 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">TokenHunt icon</title>
+  <desc id="desc">A shield with a scanning token mark in Solana purple and green.</desc>
+  <defs>
+    <linearGradient id="shield" x1="92" y1="48" x2="420" y2="456" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#9945FF"/>
+      <stop offset="1" stop-color="#14F195"/>
+    </linearGradient>
+    <linearGradient id="core" x1="154" y1="112" x2="358" y2="400" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#18181B"/>
+      <stop offset="1" stop-color="#050505"/>
+    </linearGradient>
+    <filter id="glow" x="80" y="56" width="352" height="400" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="18" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.38 0 0 0 0 0.12 0 0 0 0 0.95 0 0 0 0.32 0"/>
+      <feBlend in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="#050505"/>
+  <path d="M256 49L400 101V212C400 319 341 410 256 463C171 410 112 319 112 212V101L256 49Z" fill="url(#shield)" filter="url(#glow)"/>
+  <path d="M256 86L365 126V213C365 300 322 371 256 417C190 371 147 300 147 213V126L256 86Z" fill="url(#core)"/>
+  <path d="M178 206H302C326 206 345 225 345 249C345 273 326 292 302 292H234" stroke="#14F195" stroke-width="28" stroke-linecap="round"/>
+  <path d="M212 249H338" stroke="#9945FF" stroke-width="28" stroke-linecap="round"/>
+  <circle cx="208" cy="249" r="52" fill="#050505" stroke="#F4F4F5" stroke-width="18"/>
+  <path d="M187 250L204 267L232 226" stroke="#14F195" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M158 344H354" stroke="#9945FF" stroke-width="18" stroke-linecap="round" opacity="0.75"/>
+  <path d="M190 376H322" stroke="#14F195" stroke-width="18" stroke-linecap="round" opacity="0.8"/>
+</svg>

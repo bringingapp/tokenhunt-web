@@ -6,6 +6,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { authApi } from '@/lib/api';
 import bs58 from 'bs58';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const WalletMultiButtonDynamic = dynamic(
     async () => (await import('@solana/wallet-adapter-react-ui')).WalletMultiButton,
@@ -64,6 +65,13 @@ export default function Header() {
         <header className="flex items-center justify-between py-4 px-8 bg-white dark:bg-black border-b border-zinc-200 dark:border-zinc-800">
             <div className="flex items-center gap-10">
                 <Link href="/" className="flex items-center gap-2">
+                    <Image
+                        src="/brand/tokenhunt-icon.svg"
+                        alt=""
+                        width={32}
+                        height={32}
+                        aria-hidden="true"
+                    />
                     <span className="text-2xl font-bold text-black dark:text-white">TokenHunt</span>
                 </Link>
                 <nav className="hidden md:flex items-center gap-8">

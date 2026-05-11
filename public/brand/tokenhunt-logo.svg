@@ -1,0 +1,29 @@
+<svg width="1400" height="360" viewBox="0 0 1400 360" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">TokenHunt logo</title>
+  <desc id="desc">TokenHunt wordmark with a shield and scanner icon.</desc>
+  <defs>
+    <linearGradient id="shield" x1="46" y1="28" x2="286" y2="324" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#9945FF"/>
+      <stop offset="1" stop-color="#14F195"/>
+    </linearGradient>
+    <linearGradient id="word" x1="362" y1="82" x2="1050" y2="278" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="0.48" stop-color="#FFFFFF"/>
+      <stop offset="0.49" stop-color="#14F195"/>
+      <stop offset="1" stop-color="#9945FF"/>
+    </linearGradient>
+  </defs>
+  <rect width="1400" height="360" rx="72" fill="#050505"/>
+  <g>
+    <path d="M166 34L286 78V171C286 262 237 318 166 352C95 318 46 262 46 171V78L166 34Z" fill="url(#shield)"/>
+    <path d="M166 66L258 100V172C258 243 222 290 166 321C110 290 74 243 74 172V100L166 66Z" fill="#09090B"/>
+    <path d="M102 164H202C222 164 238 180 238 200C238 220 222 236 202 236H148" stroke="#14F195" stroke-width="22" stroke-linecap="round"/>
+    <path d="M130 200H232" stroke="#9945FF" stroke-width="22" stroke-linecap="round"/>
+    <circle cx="128" cy="200" r="42" fill="#050505" stroke="#F4F4F5" stroke-width="14"/>
+    <path d="M111 201L126 215L149 181" stroke="#14F195" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M88 278H244" stroke="#9945FF" stroke-width="14" stroke-linecap="round" opacity="0.75"/>
+    <path d="M114 304H218" stroke="#14F195" stroke-width="14" stroke-linecap="round" opacity="0.8"/>
+  </g>
+  <text x="350" y="204" fill="url(#word)" font-family="Geist, Inter, Arial, sans-serif" font-size="104" font-weight="900" letter-spacing="0">TokenHunt</text>
+  <text x="356" y="266" fill="#A1A1AA" font-family="Geist, Inter, Arial, sans-serif" font-size="34" font-weight="700" letter-spacing="6">HUNT SAFELY. VOTE SMART.</text>
+</svg>
